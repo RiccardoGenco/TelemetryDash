@@ -1,13 +1,14 @@
 using System.Net.Sockets;
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using TelemetryDash.Core.Enums;
 using TelemetryDash.Core.Interfaces;
 using TelemetryDash.Core.Models;
 
 namespace TelemetryDash.Infrastructure.Plugins;
 
-[System.ComponentModel.Composition.Export(typeof(IDataSourcePlugin))]
+// Exported via [InheritedExport] on IDataSourcePlugin — no explicit [Export] to avoid duplicate registration.
 public class TcpReceiver : IDataSourcePlugin
 {
     private readonly ILogger<TcpReceiver> _logger;
@@ -17,6 +18,8 @@ public class TcpReceiver : IDataSourcePlugin
     private int _port = 5000;
 
     public string Name => "TCP Receiver";
+
+    public TcpReceiver() : this(NullLogger<TcpReceiver>.Instance) { }
 
     public TcpReceiver(ILogger<TcpReceiver> logger, string host = "127.0.0.1", int port = 5000)
     {
@@ -28,7 +31,26 @@ public class TcpReceiver : IDataSourcePlugin
     public async Task ConnectAsync()
     {
         _client = new TcpClient();
-        await _client.ConnectAsync(_host, _port);
+        try
+        {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await _client.ConnectAsync(_host, _port, cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            _client.Dispose();
+            _client = null;
+            throw new InvalidOperationException(
+                $"Connection to {_host}:{_port} timed out. Ensure tcp_simulator.py is running.");
+        }
+        catch (SocketException ex)
+        {
+            _client.Dispose();
+            _client = null;
+            throw new InvalidOperationException(
+                $"Cannot connect to {_host}:{_port} — {ex.Message}. Run: python tools/tcp_simulator.py", ex);
+        }
+
         _isConnected = true;
         _logger.LogInformation("TCP connected to {Host}:{Port}", _host, _port);
     }

@@ -11,9 +11,13 @@ public interface IPlaybackService
     void Pause();
     void Stop();
     void Seek(DateTime timestamp);
+    void SeekToFraction(double fraction);
     void SetSpeed(double multiplier);
     PlaybackState State { get; }
     double Speed { get; }
+    int CurrentIndex { get; }
+    int TotalReadings { get; }
     event Action<TelemetryReading>? OnReading;
     event Action<PlaybackState>? OnStateChanged;
+    event Action<int>? OnProgress;
 }

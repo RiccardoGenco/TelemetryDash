@@ -22,7 +22,7 @@ public partial class App : Application
             .WriteTo.File(
                 path: "logs/telemetry-.csv",
                 rollingInterval: RollingInterval.Day,
-                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff};{Level:u3};{SourceContext};{Message:lj}{NewLine}")
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff};{Level:u3};{SourceContext};{Message:lj}{NewLine}{Exception}")
             .CreateLogger();
 
         var services = new ServiceCollection();

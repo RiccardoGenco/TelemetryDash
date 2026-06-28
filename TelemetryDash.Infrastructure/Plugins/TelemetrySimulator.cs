@@ -7,7 +7,7 @@ using TelemetryDash.Core.Models;
 
 namespace TelemetryDash.Infrastructure.Plugins;
 
-[System.ComponentModel.Composition.Export(typeof(IDataSourcePlugin))]
+// Exported via [InheritedExport] on IDataSourcePlugin — no explicit [Export] to avoid duplicate registration.
 public class TelemetrySimulator : IDataSourcePlugin
 {
     private readonly ILogger<TelemetrySimulator> _logger;

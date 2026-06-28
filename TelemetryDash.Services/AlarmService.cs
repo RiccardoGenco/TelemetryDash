@@ -31,6 +31,11 @@ public class AlarmService : IAlarmService
             config.ChannelId, config.MinValue, config.MaxValue);
     }
 
+    public IReadOnlyCollection<AlarmConfig> GetConfigs()
+    {
+        return _configs.Values.ToList().AsReadOnly();
+    }
+
     public AlarmResult Evaluate(TelemetryReading reading)
     {
         if (!_configs.TryGetValue(reading.ChannelId, out var config))

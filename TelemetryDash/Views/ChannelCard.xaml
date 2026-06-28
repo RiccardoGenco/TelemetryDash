@@ -2,37 +2,58 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:TelemetryDash.Views">
-  <Border Style="{StaticResource CardBorder}">
+  <Border Style="{StaticResource CardBorder}"
+          BorderBrush="{Binding CardBorderBrush}"
+          BorderThickness="{Binding CardBorderThickness}">
     <Grid>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
+      <!-- Content -->
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-      <!-- Header: Channel ID + Value -->
-      <DockPanel Grid.Row="0" Margin="0,0,0,6">
-        <TextBlock Text="{Binding ChannelId}" FontSize="13" FontWeight="SemiBold"
-                   Foreground="{StaticResource SecondaryTextBrush}" DockPanel.Dock="Left" />
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-          <TextBlock Text="{Binding CurrentValue, StringFormat='{}{0:F2}'}" FontSize="20" FontWeight="Bold"
-                     Foreground="{StaticResource PrimaryTextBrush}" />
-          <TextBlock Text="{Binding Unit}" FontSize="12" VerticalAlignment="Bottom" Margin="4,0,0,3"
-                     Foreground="{StaticResource SecondaryTextBrush}" />
-        </StackPanel>
-      </DockPanel>
+        <!-- Header: Channel ID + quality badge + value -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,6">
+          <TextBlock Text="{Binding ChannelId}" FontSize="13" FontWeight="SemiBold"
+                     VerticalAlignment="Center"
+                     Foreground="{StaticResource SecondaryTextBrush}" DockPanel.Dock="Left" />
+          <Border DockPanel.Dock="Left" Margin="6,0,0,0" Padding="4,0" CornerRadius="0"
+                  VerticalAlignment="Center" BorderThickness="1"
+                  BorderBrush="{Binding QualityBrush}">
+            <TextBlock Text="{Binding QualityLabel}" FontSize="9" FontWeight="Bold"
+                       Foreground="{Binding QualityBrush}" />
+          </Border>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding CurrentValue, StringFormat='{}{0:F2}'}" FontSize="20" FontWeight="Bold"
+                       Foreground="{StaticResource PrimaryTextBrush}" />
+            <TextBlock Text="{Binding Unit}" FontSize="12" VerticalAlignment="Bottom" Margin="4,0,0,3"
+                       Foreground="{StaticResource SecondaryTextBrush}" />
+          </StackPanel>
+        </DockPanel>
 
-      <!-- Sparkline -->
-      <views:SparklineControl Grid.Row="1" Values="{Binding SparklineValues}"
-                               Height="45" Margin="0,2" ClipToBounds="True" />
+        <!-- Sparkline -->
+        <views:SparklineControl Grid.Row="1" Values="{Binding SparklineValues}"
+                                 StrokeColor="{StaticResource GreenBrush}"
+                                 Height="45" Margin="0,2" ClipToBounds="True" />
 
-      <!-- Saturation Bar -->
-      <Grid Grid.Row="2" Height="6" Margin="0,6,0,0">
-        <Border Background="{StaticResource SecondaryBackgroundBrush}" CornerRadius="3" />
-        <Border Background="{Binding SaturationBrush}" CornerRadius="3"
-                HorizontalAlignment="Left"
-                Width="{Binding SaturationPercent, Converter={StaticResource PercentToWidthConverter}}" />
+        <!-- Saturation Bar -->
+        <Grid Grid.Row="2" Height="6" Margin="0,6,0,0">
+          <Border Background="{StaticResource SecondaryBackgroundBrush}" CornerRadius="0" />
+          <Border Background="{Binding SaturationBrush}" CornerRadius="0"
+                  HorizontalAlignment="Left"
+                  Width="{Binding SaturationPercent, Converter={StaticResource PercentToWidthConverter}}" />
+        </Grid>
       </Grid>
+
+      <!-- NO DATA overlay (stale channel) -->
+      <Border Background="#D0070A07"
+              Visibility="{Binding IsStale, Converter={StaticResource BoolToVis}}">
+        <TextBlock Text="{DynamicResource LblNoData}" FontSize="16" FontWeight="Bold"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Foreground="{StaticResource SecondaryTextBrush}" />
+      </Border>
     </Grid>
   </Border>
 </UserControl>

@@ -13,9 +13,9 @@
   <sys:String x:Key="LblDisconnected">Disconnected</sys:String>
   <sys:String x:Key="LblLearning">Learning</sys:String>
   <sys:String x:Key="LblLastUpdate">Last Update</sys:String>
-  <sys:String x:Key="LblAlarms">Active Alarms</sys:String>
-  <sys:String x:Key="LblEvents">Event Log</sys:String>
-  <sys:String x:Key="LblChannels">Channels</sys:String>
+  <sys:String x:Key="LblAlarms">&gt; ACTIVE ALARMS</sys:String>
+  <sys:String x:Key="LblEvents">&gt; EVENT LOG</sys:String>
+  <sys:String x:Key="LblChannels">&gt; CHANNELS</sys:String>
   <sys:String x:Key="LblNoData">No data</sys:String>
   <sys:String x:Key="LblLanguage">Language</sys:String>
   <sys:String x:Key="BtnPlay">Play</sys:String>
@@ -24,5 +24,16 @@
   <sys:String x:Key="LblSpeed">Speed</sys:String>
   <sys:String x:Key="LblSession">Session</sys:String>
   <sys:String x:Key="BtnLiveMode">Live</sys:String>
+  <sys:String x:Key="LblConnecting">Connecting</sys:String>
+  <sys:String x:Key="LblEmptyHint">Select a data source and press Connect</sys:String>
+  <sys:String x:Key="LblSettings">Alarm Thresholds</sys:String>
+  <sys:String x:Key="LblChannel">Channel</sys:String>
+  <sys:String x:Key="LblMin">Min</sys:String>
+  <sys:String x:Key="LblMax">Max</sys:String>
+  <sys:String x:Key="LblSeverity">Severity</sys:String>
+  <sys:String x:Key="BtnSave">Save</sys:String>
+  <sys:String x:Key="BtnCancel">Cancel</sys:String>
+  <sys:String x:Key="BtnAck">Ack</sys:String>
+  <sys:String x:Key="BtnOpenReport">Open</sys:String>
 
 </ResourceDictionary>

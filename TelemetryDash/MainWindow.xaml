@@ -9,247 +9,343 @@
         MinHeight="600" MinWidth="900"
         WindowStartupLocation="CenterScreen">
 
-  <Grid Margin="8">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
+  <!-- Root: main layout + floating overlays (toast, settings) -->
+  <Grid>
 
-    <!-- Toolbar -->
-    <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="0,0,0,4" Padding="8">
-      <DockPanel>
-        <!-- Left: Connection controls -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-          <!-- Live mode controls -->
-          <ComboBox ItemsSource="{Binding AvailablePlugins}" SelectedItem="{Binding SelectedPlugin}"
-                    Width="140" Margin="0,0,8,0" VerticalContentAlignment="Center"
-                    IsEnabled="{Binding IsLiveMode}" />
-          <Button Content="{DynamicResource BtnConnect}" Command="{Binding ConnectCommand}"
-                  Style="{StaticResource ToolbarButton}" />
-          <Button Content="{DynamicResource BtnDisconnect}" Command="{Binding DisconnectCommand}"
-                  Style="{StaticResource ToolbarButton}" />
-          <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
+    <Grid Margin="8">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
-          <!-- Playback toggle -->
-          <Button Command="{Binding TogglePlaybackCommand}" Style="{StaticResource ToolbarButton}">
-            <Button.Content>
-              <TextBlock>
-                <TextBlock.Style>
-                  <Style TargetType="TextBlock">
-                    <Setter Property="Text" Value="{DynamicResource BtnPlayback}" />
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding IsPlaybackMode}" Value="True">
-                        <Setter Property="Text" Value="{DynamicResource BtnLiveMode}" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </TextBlock.Style>
-              </TextBlock>
-            </Button.Content>
-          </Button>
-
-          <!-- Playback controls (visible only in playback mode) -->
-          <StackPanel Orientation="Horizontal" Visibility="{Binding PlaybackVisibility}">
+      <!-- Toolbar -->
+      <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="0,0,0,4" Padding="8">
+        <DockPanel>
+          <!-- Left: Connection controls -->
+          <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+            <!-- Live mode controls -->
+            <ComboBox ItemsSource="{Binding AvailablePlugins}" SelectedItem="{Binding SelectedPlugin}"
+                      Width="140" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                      IsEnabled="{Binding IsLiveMode}" />
+            <Button Content="{DynamicResource BtnConnect}" Command="{Binding ConnectCommand}"
+                    Style="{StaticResource ToolbarButton}" />
+            <Button Content="{DynamicResource BtnDisconnect}" Command="{Binding DisconnectCommand}"
+                    Style="{StaticResource ToolbarButton}" />
             <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
-            <TextBlock Text="{DynamicResource LblSession}" VerticalAlignment="Center" Margin="0,0,4,0"
-                       Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
-            <ComboBox ItemsSource="{Binding AvailableSessions}" SelectedItem="{Binding SelectedSession}"
-                      Width="200" Margin="0,0,8,0" VerticalContentAlignment="Center" />
-            <Button Content="{DynamicResource BtnPlay}" Command="{Binding PlayCommand}"
+
+            <!-- Playback toggle -->
+            <Button Command="{Binding TogglePlaybackCommand}" Style="{StaticResource ToolbarButton}">
+              <Button.Content>
+                <TextBlock>
+                  <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="Text" Value="{DynamicResource BtnPlayback}" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaybackMode}" Value="True">
+                          <Setter Property="Text" Value="{DynamicResource BtnLiveMode}" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                </TextBlock>
+              </Button.Content>
+            </Button>
+
+            <!-- Playback controls (visible only in playback mode) -->
+            <StackPanel Orientation="Horizontal" Visibility="{Binding PlaybackVisibility}">
+              <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
+              <TextBlock Text="{DynamicResource LblSession}" VerticalAlignment="Center" Margin="0,0,4,0"
+                         Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
+              <ComboBox ItemsSource="{Binding AvailableSessions}" SelectedItem="{Binding SelectedSession}"
+                        Width="200" Margin="0,0,8,0" VerticalContentAlignment="Center" />
+              <Button Content="{DynamicResource BtnPlay}" Command="{Binding PlayCommand}"
+                      Style="{StaticResource ToolbarButton}" />
+              <Button Content="{DynamicResource BtnPause}" Command="{Binding PauseCommand}"
+                      Style="{StaticResource ToolbarButton}" />
+              <Button Content="{DynamicResource BtnStop}" Command="{Binding StopCommand}"
+                      Style="{StaticResource ToolbarButton}" />
+              <!-- Scrubber + time -->
+              <Slider Width="150" Minimum="0" Maximum="1" Value="{Binding PlaybackPosition}"
+                      VerticalAlignment="Center" Margin="8,0,6,0" />
+              <TextBlock Text="{Binding PlaybackTimeLabel}" VerticalAlignment="Center" Margin="0,0,4,0"
+                         Foreground="{StaticResource SecondaryTextBrush}" FontSize="11" />
+              <TextBlock Text="{DynamicResource LblSpeed}" VerticalAlignment="Center" Margin="8,0,4,0"
+                         Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
+              <ComboBox SelectedValue="{Binding PlaybackSpeed}" Width="60" VerticalContentAlignment="Center">
+                <ComboBox.Items>
+                  <sys:Double>0.25</sys:Double>
+                  <sys:Double>0.5</sys:Double>
+                  <sys:Double>1</sys:Double>
+                  <sys:Double>2</sys:Double>
+                  <sys:Double>4</sys:Double>
+                  <sys:Double>8</sys:Double>
+                </ComboBox.Items>
+              </ComboBox>
+            </StackPanel>
+
+            <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
+            <Button Content="{DynamicResource BtnReport}" Command="{Binding GenerateReportCommand}"
                     Style="{StaticResource ToolbarButton}" />
-            <Button Content="{DynamicResource BtnPause}" Command="{Binding PauseCommand}"
+            <Button Content="{DynamicResource BtnSettings}" Command="{Binding ToggleSettingsCommand}"
                     Style="{StaticResource ToolbarButton}" />
-            <Button Content="{DynamicResource BtnStop}" Command="{Binding StopCommand}"
-                    Style="{StaticResource ToolbarButton}" />
-            <TextBlock Text="{DynamicResource LblSpeed}" VerticalAlignment="Center" Margin="8,0,4,0"
-                       Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
-            <ComboBox SelectedValue="{Binding PlaybackSpeed}" Width="60" VerticalContentAlignment="Center">
-              <ComboBox.Items>
-                <sys:Double>0.25</sys:Double>
-                <sys:Double>0.5</sys:Double>
-                <sys:Double>1</sys:Double>
-                <sys:Double>2</sys:Double>
-                <sys:Double>4</sys:Double>
-                <sys:Double>8</sys:Double>
-              </ComboBox.Items>
-            </ComboBox>
           </StackPanel>
 
-          <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
-          <Button Content="{DynamicResource BtnReport}" Command="{Binding GenerateReportCommand}"
-                  Style="{StaticResource ToolbarButton}" />
-        </StackPanel>
+          <!-- Right: Language + Status -->
+          <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+            <TextBlock Text="{DynamicResource LblLanguage}" VerticalAlignment="Center" Margin="0,0,4,0"
+                       Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
+            <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"
+                      Width="60" VerticalContentAlignment="Center" Margin="0,0,12,0" />
+            <Ellipse Width="10" Height="10" Margin="0,0,6,0" Fill="{Binding ConnectionStatusBrush}" />
+            <TextBlock VerticalAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                  <Setter Property="Text" Value="{DynamicResource LblDisconnected}" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding ConnectionStatus}" Value="Connecting">
+                      <Setter Property="Text" Value="{DynamicResource LblConnecting}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                      <Setter Property="Text" Value="{DynamicResource LblConnected}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+            <TextBlock Text="{Binding LastUpdateTimestamp, StringFormat=' | {0}'}"
+                       VerticalAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"
+                       Margin="8,0,0,0" />
+          </StackPanel>
+        </DockPanel>
+      </Border>
 
-        <!-- Right: Language + Status -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
-          <TextBlock Text="{DynamicResource LblLanguage}" VerticalAlignment="Center" Margin="0,0,4,0"
-                     Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
-          <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"
-                    Width="60" VerticalContentAlignment="Center" Margin="0,0,12,0" />
-          <Ellipse Width="10" Height="10" Margin="0,0,6,0">
-            <Ellipse.Style>
-              <Style TargetType="Ellipse">
-                <Setter Property="Fill" Value="{StaticResource RedBrush}" />
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                    <Setter Property="Fill" Value="{StaticResource GreenBrush}" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </Ellipse.Style>
-          </Ellipse>
-          <TextBlock VerticalAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12">
-            <TextBlock.Style>
-              <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                <Setter Property="Text" Value="{DynamicResource LblDisconnected}" />
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                    <Setter Property="Text" Value="{DynamicResource LblConnected}" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
-          <TextBlock Text="{Binding LastUpdateTimestamp, StringFormat=' | {0}'}"
-                     VerticalAlignment="Center" Foreground="{StaticResource SecondaryTextBrush}" FontSize="12"
-                     Margin="8,0,0,0" />
-        </StackPanel>
-      </DockPanel>
-    </Border>
+      <!-- Main Content -->
+      <Grid Grid.Row="1">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="2*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-    <!-- Main Content -->
-    <Grid Grid.Row="1">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="2*" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
+        <!-- Left: Channel Cards -->
+        <Border Grid.Column="0" Margin="0,0,4,0">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-      <!-- Left: Channel Cards -->
-      <Border Grid.Column="0" Margin="0,0,4,0">
-        <Grid>
+            <TextBlock Grid.Row="0" Text="{DynamicResource LblChannels}" Style="{StaticResource SectionHeader}"
+                       Margin="8,4" />
+
+            <ItemsControl Grid.Row="1" ItemsSource="{Binding Channels}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Columns="2" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <views:ChannelCard DataContext="{Binding}" Margin="2" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Empty state hint -->
+            <TextBlock Grid.Row="1" Text="{DynamicResource LblEmptyHint}" FontSize="14"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{StaticResource SecondaryTextBrush}">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasChannels}" Value="False">
+                      <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </Grid>
+        </Border>
+
+        <!-- Right: Alarms + Log -->
+        <Grid Grid.Column="1" Margin="4,0,0,0">
           <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
           </Grid.RowDefinitions>
 
-          <TextBlock Grid.Row="0" Text="{DynamicResource LblChannels}" FontSize="14" FontWeight="SemiBold"
-                     Margin="8,4" Foreground="{StaticResource SecondaryTextBrush}" />
+          <!-- Alarms Panel -->
+          <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="0,0,0,4">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
 
-          <ItemsControl Grid.Row="1" ItemsSource="{Binding Channels}">
-            <ItemsControl.ItemsPanel>
-              <ItemsPanelTemplate>
-                <UniformGrid Columns="2" />
-              </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
+              <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                <Button DockPanel.Dock="Right" Content="{DynamicResource BtnAck}"
+                        Command="{Binding AcknowledgeAlarmsCommand}"
+                        Style="{StaticResource ToolbarButton}" Padding="8,2" Margin="0" FontSize="11" />
+                <TextBlock Text="{DynamicResource LblAlarms}" Style="{StaticResource SectionHeader}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="{Binding ActiveAlarmCount, StringFormat=' [{0}]'}" FontSize="13" FontWeight="Bold"
+                           VerticalAlignment="Center" Foreground="{StaticResource RedBrush}"
+                           Visibility="{Binding HasAlarms, Converter={StaticResource BoolToVis}}" />
+                <TextBlock FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center"
+                           Foreground="{StaticResource AmberBrush}">
+                  <TextBlock.Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                      <Setter Property="Visibility" Value="Collapsed" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsLearning}" Value="True">
+                          <Setter Property="Visibility" Value="Visible" />
+                          <Setter Property="Text" Value="{DynamicResource LblLearning}" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                </TextBlock>
+              </DockPanel>
+
+              <ListBox Grid.Row="1" ItemsSource="{Binding Alarms}"
+                       Background="Transparent" BorderThickness="0"
+                       ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <DockPanel Margin="0,2">
+                      <Border Background="{Binding SeverityBrush}" CornerRadius="2" Padding="4,1" Margin="0,0,6,0"
+                              DockPanel.Dock="Left">
+                        <TextBlock Text="{Binding SeverityLabel}" FontSize="10" FontWeight="Bold"
+                                   Foreground="White" />
+                      </Border>
+                      <TextBlock Text="{Binding TimestampFormatted}" FontSize="11"
+                                 Foreground="{StaticResource SecondaryTextBrush}" DockPanel.Dock="Left"
+                                 Margin="0,0,6,0" />
+                      <TextBlock Text="{Binding Message}" FontSize="11" TextTrimming="CharacterEllipsis"
+                                 Foreground="{StaticResource PrimaryTextBrush}" />
+                    </DockPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Grid>
+          </Border>
+
+          <!-- Event Log -->
+          <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,4,0,0">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+
+              <TextBlock Grid.Row="0" Text="{DynamicResource LblEvents}" Style="{StaticResource SectionHeader}"
+                         Margin="0,0,0,6" />
+
+              <ListBox Grid.Row="1" ItemsSource="{Binding LogEntries}"
+                       Background="Transparent" BorderThickness="0"
+                       ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <DockPanel Margin="0,1">
+                      <TextBlock Text="{Binding TimestampFormatted}" FontSize="11" FontFamily="Consolas"
+                                 Foreground="{StaticResource SecondaryTextBrush}" DockPanel.Dock="Left"
+                                 Margin="0,0,6,0" />
+                      <TextBlock Text="{Binding Level}" FontSize="11" FontWeight="Bold" FontFamily="Consolas"
+                                 Foreground="{Binding LevelBrush}" DockPanel.Dock="Left"
+                                 Width="35" Margin="0,0,6,0" />
+                      <TextBlock Text="{Binding Message}" FontSize="11" FontFamily="Consolas"
+                                 Foreground="{StaticResource PrimaryTextBrush}" TextTrimming="CharacterEllipsis" />
+                    </DockPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Grid>
+          </Border>
+        </Grid>
+      </Grid>
+
+      <!-- Status Bar -->
+      <Border Grid.Row="2" Background="{StaticResource SecondaryBackgroundBrush}" CornerRadius="0"
+              Margin="0,4,0,0" Padding="12,4">
+        <DockPanel>
+          <TextBlock Text="TelemetryDash v1.0.0" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" />
+          <TextBlock Text="{Binding ConnectionStatus}" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}"
+                     HorizontalAlignment="Right" />
+        </DockPanel>
+      </Border>
+    </Grid>
+
+    <!-- Toast / notification banner -->
+    <Border VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,72,0,0"
+            Background="{StaticResource SecondaryBackgroundBrush}"
+            BorderBrush="{Binding NotificationBrush}" BorderThickness="1" Padding="14,8"
+            Visibility="{Binding NotificationVisible, Converter={StaticResource BoolToVis}}">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="{Binding NotificationText}" Foreground="{Binding NotificationBrush}"
+                   VerticalAlignment="Center" FontSize="13" />
+        <Button Content="{DynamicResource BtnOpenReport}" Command="{Binding OpenReportCommand}"
+                Style="{StaticResource ToolbarButton}" Margin="12,0,0,0" Padding="8,2" FontSize="11"
+                Visibility="{Binding NotificationShowOpen, Converter={StaticResource BoolToVis}}" />
+      </StackPanel>
+    </Border>
+
+    <!-- Settings overlay -->
+    <Border Background="#CC05070A"
+            Visibility="{Binding IsSettingsOpen, Converter={StaticResource BoolToVis}}">
+      <Border Style="{StaticResource CardBorder}" Width="540" Padding="18"
+              VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel>
+          <TextBlock Text="{DynamicResource LblSettings}" Style="{StaticResource SectionHeader}"
+                     Margin="0,0,0,10" />
+
+          <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="2*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="1.6*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{DynamicResource LblChannel}"
+                       Foreground="{StaticResource SecondaryTextBrush}" />
+            <TextBlock Grid.Column="1" Text="{DynamicResource LblMin}"
+                       Foreground="{StaticResource SecondaryTextBrush}" />
+            <TextBlock Grid.Column="2" Text="{DynamicResource LblMax}"
+                       Foreground="{StaticResource SecondaryTextBrush}" />
+            <TextBlock Grid.Column="3" Text="{DynamicResource LblSeverity}"
+                       Foreground="{StaticResource SecondaryTextBrush}" />
+          </Grid>
+
+          <ItemsControl ItemsSource="{Binding AlarmConfigs}">
             <ItemsControl.ItemTemplate>
               <DataTemplate>
-                <views:ChannelCard DataContext="{Binding}" Margin="2" />
+                <Grid Margin="0,3">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.6*" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Grid.Column="0" Text="{Binding ChannelId}" VerticalAlignment="Center" />
+                  <TextBox Grid.Column="1" Text="{Binding MinValue}" Margin="2,0" />
+                  <TextBox Grid.Column="2" Text="{Binding MaxValue}" Margin="2,0" />
+                  <ComboBox Grid.Column="3" ItemsSource="{Binding SeverityOptions}"
+                            SelectedItem="{Binding Severity}" Margin="2,0" Height="26" />
+                </Grid>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-        </Grid>
+
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,14,0,0">
+            <Button Content="{DynamicResource BtnCancel}" Command="{Binding ToggleSettingsCommand}"
+                    Style="{StaticResource ToolbarButton}" />
+            <Button Content="{DynamicResource BtnSave}" Command="{Binding SaveSettingsCommand}"
+                    Style="{StaticResource ToolbarButton}" />
+          </StackPanel>
+        </StackPanel>
       </Border>
-
-      <!-- Right: Alarms + Log -->
-      <Grid Grid.Column="1" Margin="4,0,0,0">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!-- Alarms Panel -->
-        <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="0,0,0,4">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,6">
-              <TextBlock Text="{DynamicResource LblAlarms}" FontSize="14" FontWeight="SemiBold"
-                         Foreground="{StaticResource SecondaryTextBrush}" />
-              <TextBlock FontSize="11" Margin="8,2,0,0" Foreground="{StaticResource AmberBrush}">
-                <TextBlock.Style>
-                  <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding IsLearning}" Value="True">
-                        <Setter Property="Visibility" Value="Visible" />
-                        <Setter Property="Text" Value="{DynamicResource LblLearning}" />
-                        <Setter Property="Foreground" Value="{StaticResource AmberBrush}" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </TextBlock.Style>
-              </TextBlock>
-            </StackPanel>
-
-            <ListBox Grid.Row="1" ItemsSource="{Binding Alarms}"
-                     Background="Transparent" BorderThickness="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-              <ListBox.ItemTemplate>
-                <DataTemplate>
-                  <DockPanel Margin="0,2">
-                    <Border Background="{Binding SeverityBrush}" CornerRadius="2" Padding="4,1" Margin="0,0,6,0"
-                            DockPanel.Dock="Left">
-                      <TextBlock Text="{Binding SeverityLabel}" FontSize="10" FontWeight="Bold"
-                                 Foreground="White" />
-                    </Border>
-                    <TextBlock Text="{Binding TimestampFormatted}" FontSize="11"
-                               Foreground="{StaticResource SecondaryTextBrush}" DockPanel.Dock="Left"
-                               Margin="0,0,6,0" />
-                    <TextBlock Text="{Binding Message}" FontSize="11" TextTrimming="CharacterEllipsis"
-                               Foreground="{StaticResource PrimaryTextBrush}" />
-                  </DockPanel>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </Grid>
-        </Border>
-
-        <!-- Event Log -->
-        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,4,0,0">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Text="{DynamicResource LblEvents}" FontSize="14" FontWeight="SemiBold"
-                       Foreground="{StaticResource SecondaryTextBrush}" Margin="0,0,0,6" />
-
-            <ListBox Grid.Row="1" ItemsSource="{Binding LogEntries}"
-                     Background="Transparent" BorderThickness="0"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-              <ListBox.ItemTemplate>
-                <DataTemplate>
-                  <DockPanel Margin="0,1">
-                    <TextBlock Text="{Binding TimestampFormatted}" FontSize="11" FontFamily="Consolas"
-                               Foreground="{StaticResource SecondaryTextBrush}" DockPanel.Dock="Left"
-                               Margin="0,0,6,0" />
-                    <TextBlock Text="{Binding Level}" FontSize="11" FontWeight="Bold" FontFamily="Consolas"
-                               Foreground="{Binding LevelBrush}" DockPanel.Dock="Left"
-                               Width="35" Margin="0,0,6,0" />
-                    <TextBlock Text="{Binding Message}" FontSize="11" FontFamily="Consolas"
-                               Foreground="{StaticResource PrimaryTextBrush}" TextTrimming="CharacterEllipsis" />
-                  </DockPanel>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </Grid>
-        </Border>
-      </Grid>
-    </Grid>
-
-    <!-- Status Bar -->
-    <Border Grid.Row="2" Background="{StaticResource SecondaryBackgroundBrush}" CornerRadius="4"
-            Margin="0,4,0,0" Padding="12,4">
-      <DockPanel>
-        <TextBlock Text="TelemetryDash v1.0.0" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}" />
-        <TextBlock Text="{Binding ConnectionStatus}" FontSize="11" Foreground="{StaticResource SecondaryTextBrush}"
-                   HorizontalAlignment="Right" />
-      </DockPanel>
     </Border>
+
   </Grid>
 </Window>

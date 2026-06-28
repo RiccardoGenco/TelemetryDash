@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Media;
 using TelemetryDash.Core.Enums;
 using TelemetryDash.Core.Mvvm;
@@ -9,6 +10,13 @@ public class ChannelViewModel : ObservableObject
 {
     private const int MaxSparklinePoints = 60;
 
+    // Theme colours (kept in sync with Resources/Theme.xaml)
+    private static readonly Color GreenColor = Color.FromRgb(0x38, 0xF0, 0x6A);
+    private static readonly Color AmberColor = Color.FromRgb(0xFF, 0xB0, 0x00);
+    private static readonly Color RedColor = Color.FromRgb(0xFF, 0x55, 0x55);
+    private static readonly Color BorderColor = Color.FromRgb(0x1E, 0x4A, 0x2C);
+    private static readonly Color StaleColor = Color.FromRgb(0x55, 0x66, 0x55);
+
     private string _channelId = string.Empty;
     private double _currentValue;
     private double _minValue;
@@ -17,6 +25,9 @@ public class ChannelViewModel : ObservableObject
     private QualityFlag _quality;
     private double _saturationPercent;
     private SolidColorBrush _saturationBrush = new(Colors.Green);
+    private AlarmSeverity? _alarmState;
+    private bool _isStale;
+    private DateTime _lastUpdateUtc = DateTime.UtcNow;
 
     public string ChannelId
     {
@@ -31,6 +42,8 @@ public class ChannelViewModel : ObservableObject
         {
             if (SetProperty(ref _currentValue, value))
             {
+                LastUpdateUtc = DateTime.UtcNow;
+                IsStale = false;
                 UpdateSaturation();
                 SparklineValues.Add(value);
                 if (SparklineValues.Count > MaxSparklinePoints)
@@ -60,8 +73,79 @@ public class ChannelViewModel : ObservableObject
     public QualityFlag Quality
     {
         get => _quality;
-        set => SetProperty(ref _quality, value);
+        set
+        {
+            if (SetProperty(ref _quality, value))
+            {
+                OnPropertyChanged(nameof(QualityLabel));
+                OnPropertyChanged(nameof(QualityBrush));
+            }
+        }
     }
+
+    public string QualityLabel => _quality.ToString().ToUpperInvariant();
+
+    public SolidColorBrush QualityBrush => _quality switch
+    {
+        QualityFlag.Error => new SolidColorBrush(RedColor),
+        QualityFlag.Warning => new SolidColorBrush(AmberColor),
+        _ => new SolidColorBrush(GreenColor),
+    };
+
+    /// <summary>Current alarm severity for this channel, or null if within thresholds.</summary>
+    public AlarmSeverity? AlarmState
+    {
+        get => _alarmState;
+        set
+        {
+            if (SetProperty(ref _alarmState, value))
+            {
+                OnPropertyChanged(nameof(IsInAlarm));
+                OnPropertyChanged(nameof(CardBorderBrush));
+                OnPropertyChanged(nameof(CardBorderThickness));
+            }
+        }
+    }
+
+    public bool IsInAlarm => _alarmState is not null;
+
+    /// <summary>True when the channel has not produced a reading recently.</summary>
+    public bool IsStale
+    {
+        get => _isStale;
+        set
+        {
+            if (SetProperty(ref _isStale, value))
+            {
+                OnPropertyChanged(nameof(CardBorderBrush));
+                OnPropertyChanged(nameof(CardBorderThickness));
+            }
+        }
+    }
+
+    public DateTime LastUpdateUtc
+    {
+        get => _lastUpdateUtc;
+        set => SetProperty(ref _lastUpdateUtc, value);
+    }
+
+    /// <summary>Border colour reflecting the channel's health at a glance.</summary>
+    public SolidColorBrush CardBorderBrush
+    {
+        get
+        {
+            if (_isStale) return new SolidColorBrush(StaleColor);
+            return _alarmState switch
+            {
+                AlarmSeverity.Critical => new SolidColorBrush(RedColor),
+                AlarmSeverity.Warning => new SolidColorBrush(AmberColor),
+                AlarmSeverity.Info => new SolidColorBrush(AmberColor),
+                _ => new SolidColorBrush(BorderColor),
+            };
+        }
+    }
+
+    public Thickness CardBorderThickness => new((_isStale || _alarmState is not null) ? 2 : 1);
 
     public double SaturationPercent
     {

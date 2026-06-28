@@ -8,4 +8,5 @@ public interface IAlarmService
     IReadOnlyList<AlarmResult> GetActiveAlarms();
     void ClearAlarms();
     void AddConfig(AlarmConfig config);
+    IReadOnlyCollection<AlarmConfig> GetConfigs();
 }

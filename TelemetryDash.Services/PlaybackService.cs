@@ -32,8 +32,13 @@ public class PlaybackService : IPlaybackService
         private set => _speed = value;
     }
 
+    public int CurrentIndex => _currentIndex;
+
+    public int TotalReadings => _session?.Readings.Count ?? 0;
+
     public event Action<TelemetryReading>? OnReading;
     public event Action<PlaybackState>? OnStateChanged;
+    public event Action<int>? OnProgress;
 
     public PlaybackService(ILogger<PlaybackService> logger, ISessionRepository repository)
     {
@@ -82,6 +87,7 @@ public class PlaybackService : IPlaybackService
         _cts?.Cancel();
         _currentIndex = 0;
         State = PlaybackState.Stopped;
+        OnProgress?.Invoke(_currentIndex);
     }
 
     public void Seek(DateTime timestamp)
@@ -95,6 +101,19 @@ public class PlaybackService : IPlaybackService
             .FirstOrDefault();
 
         _logger.LogDebug("Seeked to index {Index}", _currentIndex);
+    }
+
+    public void SeekToFraction(double fraction)
+    {
+        if (_session is null || _session.Readings.Count == 0) return;
+
+        fraction = Math.Clamp(fraction, 0, 1);
+        var first = _session.Readings[0].Timestamp;
+        var last = _session.Readings[^1].Timestamp;
+        var target = first + TimeSpan.FromTicks((long)((last - first).Ticks * fraction));
+
+        Seek(target);
+        OnProgress?.Invoke(_currentIndex);
     }
 
     public void SetSpeed(double multiplier)
@@ -111,6 +130,7 @@ public class PlaybackService : IPlaybackService
         {
             var reading = _session.Readings[_currentIndex];
             OnReading?.Invoke(reading);
+            OnProgress?.Invoke(_currentIndex);
 
             // Calculate delay based on actual time gaps between readings
             if (_currentIndex + 1 < _session.Readings.Count)
