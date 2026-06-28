@@ -1,11 +1,13 @@
 using System.Reactive.Linq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using TelemetryDash.Core.Enums;
 using TelemetryDash.Core.Interfaces;
 using TelemetryDash.Core.Models;
 
 namespace TelemetryDash.Infrastructure.Plugins;
 
+[System.ComponentModel.Composition.Export(typeof(IDataSourcePlugin))]
 public class TelemetrySimulator : IDataSourcePlugin
 {
     private readonly ILogger<TelemetrySimulator> _logger;
@@ -21,6 +23,11 @@ public class TelemetrySimulator : IDataSourcePlugin
         new("VIB_C3", BaseValue: 0.5, Amplitude: 0.3, NoiseLevel: 0.05, SpikeChance: 0.03),
         new("FLOW_D4", BaseValue: 120.0, Amplitude: 20.0, NoiseLevel: 3.0, SpikeChance: 0.01),
     };
+
+    public TelemetrySimulator()
+    {
+        _logger = NullLogger<TelemetrySimulator>.Instance;
+    }
 
     public TelemetrySimulator(ILogger<TelemetrySimulator> logger)
     {

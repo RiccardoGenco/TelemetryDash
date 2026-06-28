@@ -7,6 +7,7 @@ using TelemetryDash.Core.Models;
 
 namespace TelemetryDash.Infrastructure.Plugins;
 
+[System.ComponentModel.Composition.Export(typeof(IDataSourcePlugin))]
 public class TcpReceiver : IDataSourcePlugin
 {
     private readonly ILogger<TcpReceiver> _logger;

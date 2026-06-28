@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:TelemetryDash.ViewModels"
         xmlns:views="clr-namespace:TelemetryDash.Views"
+        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
         Title="{DynamicResource AppTitle}"
         Height="720" Width="1200"
         MinHeight="600" MinWidth="900"
@@ -20,12 +21,61 @@
       <DockPanel>
         <!-- Left: Connection controls -->
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+          <!-- Live mode controls -->
           <ComboBox ItemsSource="{Binding AvailablePlugins}" SelectedItem="{Binding SelectedPlugin}"
-                    Width="140" Margin="0,0,8,0" VerticalContentAlignment="Center" />
+                    Width="140" Margin="0,0,8,0" VerticalContentAlignment="Center"
+                    IsEnabled="{Binding IsLiveMode}" />
           <Button Content="{DynamicResource BtnConnect}" Command="{Binding ConnectCommand}"
                   Style="{StaticResource ToolbarButton}" />
           <Button Content="{DynamicResource BtnDisconnect}" Command="{Binding DisconnectCommand}"
                   Style="{StaticResource ToolbarButton}" />
+          <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
+
+          <!-- Playback toggle -->
+          <Button Command="{Binding TogglePlaybackCommand}" Style="{StaticResource ToolbarButton}">
+            <Button.Content>
+              <TextBlock>
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Setter Property="Text" Value="{DynamicResource BtnPlayback}" />
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsPlaybackMode}" Value="True">
+                        <Setter Property="Text" Value="{DynamicResource BtnLiveMode}" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
+            </Button.Content>
+          </Button>
+
+          <!-- Playback controls (visible only in playback mode) -->
+          <StackPanel Orientation="Horizontal" Visibility="{Binding PlaybackVisibility}">
+            <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
+            <TextBlock Text="{DynamicResource LblSession}" VerticalAlignment="Center" Margin="0,0,4,0"
+                       Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
+            <ComboBox ItemsSource="{Binding AvailableSessions}" SelectedItem="{Binding SelectedSession}"
+                      Width="200" Margin="0,0,8,0" VerticalContentAlignment="Center" />
+            <Button Content="{DynamicResource BtnPlay}" Command="{Binding PlayCommand}"
+                    Style="{StaticResource ToolbarButton}" />
+            <Button Content="{DynamicResource BtnPause}" Command="{Binding PauseCommand}"
+                    Style="{StaticResource ToolbarButton}" />
+            <Button Content="{DynamicResource BtnStop}" Command="{Binding StopCommand}"
+                    Style="{StaticResource ToolbarButton}" />
+            <TextBlock Text="{DynamicResource LblSpeed}" VerticalAlignment="Center" Margin="8,0,4,0"
+                       Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" />
+            <ComboBox SelectedValue="{Binding PlaybackSpeed}" Width="60" VerticalContentAlignment="Center">
+              <ComboBox.Items>
+                <sys:Double>0.25</sys:Double>
+                <sys:Double>0.5</sys:Double>
+                <sys:Double>1</sys:Double>
+                <sys:Double>2</sys:Double>
+                <sys:Double>4</sys:Double>
+                <sys:Double>8</sys:Double>
+              </ComboBox.Items>
+            </ComboBox>
+          </StackPanel>
+
           <Border Width="1" Background="{StaticResource BorderBrush}" Margin="12,2" />
           <Button Content="{DynamicResource BtnReport}" Command="{Binding GenerateReportCommand}"
                   Style="{StaticResource ToolbarButton}" />

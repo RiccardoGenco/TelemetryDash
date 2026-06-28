@@ -18,5 +18,11 @@
   <sys:String x:Key="LblChannels">Channels</sys:String>
   <sys:String x:Key="LblNoData">No data</sys:String>
   <sys:String x:Key="LblLanguage">Language</sys:String>
+  <sys:String x:Key="BtnPlay">Play</sys:String>
+  <sys:String x:Key="BtnPause">Pause</sys:String>
+  <sys:String x:Key="BtnStop">Stop</sys:String>
+  <sys:String x:Key="LblSpeed">Speed</sys:String>
+  <sys:String x:Key="LblSession">Session</sys:String>
+  <sys:String x:Key="BtnLiveMode">Live</sys:String>
 
 </ResourceDictionary>

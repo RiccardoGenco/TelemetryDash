@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using TelemetryDash.Core.Interfaces;
+using TelemetryDash.Infrastructure.Data;
 using TelemetryDash.Infrastructure.Plugins;
 using TelemetryDash.Services;
 
@@ -37,6 +38,9 @@ public partial class App : Application
         services.AddSingleton<IAnomalyDetector, AnomalyDetector>();
         services.AddSingleton<IFileLogger, FileLogger>();
         services.AddSingleton<PluginLoader>();
+        services.AddSingleton<ISessionRepository, SessionRepository>();
+        services.AddSingleton<IReportGenerator, ReportGenerator>();
+        services.AddSingleton<IPlaybackService, PlaybackService>();
 
         _serviceProvider = services.BuildServiceProvider();
         Services = _serviceProvider;
