@@ -1,0 +1,22 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+  <sys:String x:Key="AppTitle">TelemetryDash - Real-Time Sensor Monitoring</sys:String>
+  <sys:String x:Key="BtnConnect">Connect</sys:String>
+  <sys:String x:Key="BtnDisconnect">Disconnect</sys:String>
+  <sys:String x:Key="BtnPlayback">Playback</sys:String>
+  <sys:String x:Key="BtnReport">Generate Report</sys:String>
+  <sys:String x:Key="BtnSettings">Settings</sys:String>
+  <sys:String x:Key="LblStatus">Status</sys:String>
+  <sys:String x:Key="LblConnected">Connected</sys:String>
+  <sys:String x:Key="LblDisconnected">Disconnected</sys:String>
+  <sys:String x:Key="LblLearning">Learning</sys:String>
+  <sys:String x:Key="LblLastUpdate">Last Update</sys:String>
+  <sys:String x:Key="LblAlarms">Active Alarms</sys:String>
+  <sys:String x:Key="LblEvents">Event Log</sys:String>
+  <sys:String x:Key="LblChannels">Channels</sys:String>
+  <sys:String x:Key="LblNoData">No data</sys:String>
+  <sys:String x:Key="LblLanguage">Language</sys:String>
+
+</ResourceDictionary>
